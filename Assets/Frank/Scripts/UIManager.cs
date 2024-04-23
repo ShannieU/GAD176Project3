@@ -15,4 +15,7 @@ public class UIManager : MonoBehaviour
     {
         
     }
+
+    //Health, Current Weapon, Ammo, Max Ammo, Enemies Killed
+
 }

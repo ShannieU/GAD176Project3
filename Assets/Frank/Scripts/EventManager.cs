@@ -13,12 +13,12 @@ public class EventManager : MonoBehaviour
     }
 
     // When the game starts
-    public event Action onGameBegin;
-    public void GameBegin( )
+    public event Action onGameStart;
+    public void GameStart()
     {
-        if (onGameBegin != null)
+        if (onGameStart != null)
         {
-            onGameBegin();
+            onGameStart();
         }
     }
 
@@ -89,6 +89,16 @@ public class EventManager : MonoBehaviour
         if (onNextStage != null)
         {
             onNextStage();
+        }
+    }
+
+    // Reset Game
+    public event Action onResetGame;
+    public void ResetGame()
+    {
+        if (onResetGame != null)
+        {
+            onResetGame();
         }
     }
 }
