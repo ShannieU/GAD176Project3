@@ -4,15 +4,44 @@ using UnityEngine;
 
 public class BaseEnemy : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    GameObject playerObj;
+
+    int health;
+
+    private void Start()
     {
-        
+        if (playerObj = null)
+        {
+            playerObj = GameObject.FindGameObjectWithTag("Player");
+        }
+        Debug.Log("Am I tagged as Enemy?");
     }
 
-    // Update is called once per frame
-    void Update()
+    private void EnemyMoves()
     {
-        
+        //get the locations
+        Vector3 playerLocation = playerObj.transform.position;
+        Vector3 dirToPlayer = playerLocation - this.transform.position;
+
+        //take that from the current pos
+
+        //move towards player
+
+    }
+
+    public void EnemyTakeDamage(int damage)
+    {
+        health -= damage;
+        if(health <= 0)
+        {
+            EnemyDies();
+        }
+    }
+
+
+    private void EnemyDies()
+    {
+        //bleh x~x
+
     }
 }
