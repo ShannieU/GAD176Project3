@@ -96,7 +96,7 @@ namespace Player
         //Contains the shoot behaviour. Pulls all necessary stats from the currentWeapon scriptableObject.
         {
             
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.Mouse0))
             {
                 if (shootDelay == false)
                 {

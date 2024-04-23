@@ -8,7 +8,6 @@ using UnityEngine;
 public class WeaponBehaviour : MonoBehaviour
 {
     [SerializeField] private WeaponScriptableObject weapon;
-    Vector3 mousePos;
 
     
     public void SelectWeapon(WeaponScriptableObject playerWeapon)
@@ -20,10 +19,10 @@ public class WeaponBehaviour : MonoBehaviour
         //Fires the current weapon.
     {
         RaycastHit hit;
-        
-        if (Physics.Raycast(Camera.main.transform.position, Input.mousePosition, out hit, 1000f))
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, 1000f))
         {
-            Debug.DrawRay(Camera.main.transform.position, Input.mousePosition, Color.red);
+            Debug.DrawRay(Camera.main.transform.position, hit.point, Color.red);
             if (hit.collider.gameObject.tag == "Enemy")
             {
                 GameObject enemy = hit.collider.gameObject;
