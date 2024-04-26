@@ -5,66 +5,75 @@ using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class WeaponBehaviour : MonoBehaviour
-{
-    [SerializeField] private WeaponScriptableObject weapon;
-
-    
-    public void SelectWeapon(WeaponScriptableObject playerWeapon)
+namespace Player {
+    public class WeaponBehaviour : MonoBehaviour
     {
-        weapon = playerWeapon;
-    }
+        private WeaponScriptableObject currentWeapon;
+        private PlayerBehaviour currentPlayer;
 
-    public void ShootWeapon()
-        //Fires the current weapon.
-    {
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, 1000f))
+        private void Start()
         {
-            Debug.DrawRay(Camera.main.transform.position, hit.point, Color.red);
-            if (hit.collider.gameObject.tag == "Enemy")
-            {
-                GameObject enemy = hit.collider.gameObject;
-                //enemy.EnemyTakeDamage(weapon.weaponDamage);
-                weapon.currentAmmoInInventory -= 1;
-                Debug.Log("Hit");
-            }
-            else if (hit.collider.gameObject)
-            {
-                Debug.Log(hit.collider.gameObject.name);
-            }
-            else
-            {
-                weapon.currentAmmoInInventory -= 1;
-                Debug.Log("Miss");
-            }
+            currentPlayer = GetComponent<PlayerBehaviour>();
         }
-        //Raycast to mouse position on screen
-        //Get collider for enemy pointed at
-        //Enemy take damage
-    }
-    public void ReloadWeapon()
-    {
-        if (weapon.currentMagazineAmmo != 0)
+        public void SetWeapon(WeaponScriptableObject weapon)
         {
-            //Reload weapon.
-            //Magazine ammo needs to find out how much it needs. So maxmagazine - currentmagazine
-            //Subtract this from the total ammo pool.
-            //If this rersults in the total ammo bool being less than 0, find the ammount that would result in 0, and substitute this in.
-            int n = weapon.maxMagazineAmmo - weapon.currentMagazineAmmo;
-            //n is how many bullets need to be put into the mag
-
-            if (n <= weapon.currentAmmoInInventory)
+            currentWeapon = weapon;
+        }
+        public void ShootWeapon()
+        //Fires the current weapon.
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, 1000f))
             {
-                weapon.currentAmmoInInventory -= n;                     //Subtracts n from the total ammo in inventory.
-                weapon.currentMagazineAmmo = weapon.maxMagazineAmmo;    //Resets magazine count
+                Debug.DrawRay(Camera.main.transform.position, hit.point, Color.red);
+                if (hit.collider.gameObject.tag == "Enemy")
+                {
+                    GameObject enemy = hit.collider.gameObject;
+                    //enemy.EnemyTakeDamage(weapon.weaponDamage);
+                    currentWeapon.currentAmmoInInventory -= 1;
+                    Debug.Log("Hit");
+                }
+                else if (hit.collider.gameObject)
+                {
+                    Debug.Log(hit.collider.gameObject.name);
+                }
+                else
+                {
+                    currentWeapon.currentAmmoInInventory -= 1;
+                    Debug.Log("Miss");
+                }
             }
-            else if (n > weapon.currentAmmoInInventory)
+            //Raycast to mouse position on screen
+            //Get collider for enemy pointed at
+            //Enemy take damage
+        }
+        public void ReloadWeapon()
+        {
+            foreach (WeaponScriptableObject weapon in currentPlayer.GetWeaponInventory())
             {
-                n = weapon.currentAmmoInInventory;                      //sets n to be the ammo left in the inventory.
-                weapon.currentAmmoInInventory -= n;                     //subtracts n from current ammo (this will always be 0, but i had to write this out like this bc i didnt take my pills today)
-                weapon.currentMagazineAmmo += n;                        //adds the remaining ammo to the magazine.
+                if (weapon.currentAmmoInInventory != 0)
+                {
+                    int n = weapon.maxMagazineAmmo - weapon.currentMagazineAmmo;        //n is the number of bullets needed
+                                                                                        //  to reload the gun to max mag cap
+                    if (n <= weapon.currentAmmoInInventory)
+                    {
+                        weapon.currentAmmoInInventory -= n;                            //Subtracts n from the total ammo in inventory.
+                        weapon.currentMagazineAmmo = weapon.maxMagazineAmmo;           //Resets the magazine count
+                    }
+                    else if (n > weapon.currentAmmoInInventory)
+                    {
+                        n = weapon.currentAmmoInInventory;                             //sets n to be the ammo left in the inventory.
+                        weapon.currentAmmoInInventory -= n;                            //subtracts n from current ammo (this will always be 0,
+                                                                                       //  but i had to write this out like this bc i didnt take
+                                                                                       //  my pills today)
+                        weapon.currentMagazineAmmo += n;                               //adds the remaining ammo to the magazine.
+                    }
+                }
+                else 
+                { 
+                    continue;
+                }
             }
         }
     }

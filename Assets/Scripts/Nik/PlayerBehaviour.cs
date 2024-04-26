@@ -17,9 +17,10 @@ namespace Player
         private enum position { inCover, outCover }
         private position playerPosition = position.inCover;
         private bool shootDelay = false;
+        private bool debug = false;
         private int weaponIndex = 0;
 
-        private List<WeaponScriptableObject> weaponsInventory = new List<WeaponScriptableObject>();
+        public List<WeaponScriptableObject> weaponsInventory = new List<WeaponScriptableObject>();
         [SerializeField] private WeaponScriptableObject starterWeapon;
         [SerializeField] private WeaponScriptableObject currentWeapon;
         [SerializeField] private WeaponBehaviour playerWeapon;
@@ -51,6 +52,7 @@ namespace Player
             }
             CoverInAndOut();
             PlayerDeathCheck();
+            DebugStats();
         }
         #endregion
 
@@ -89,6 +91,7 @@ namespace Player
                 currentHealth = currentPlayer.maxHealth;
                 weaponsInventory.Add(starterWeapon);
                 currentWeapon = weaponsInventory[weaponIndex];
+                playerWeapon.SetWeapon(currentWeapon);
             }
         }
         #endregion
@@ -121,12 +124,12 @@ namespace Player
                 {
                     weaponIndex = 0;
                     currentWeapon = weaponsInventory[weaponIndex];
-                    playerWeapon.SelectWeapon(currentWeapon);
+                    playerWeapon.SetWeapon(currentWeapon);
                 }
                 else
                 {
                     currentWeapon = weaponsInventory[weaponIndex];
-                    playerWeapon.SelectWeapon(currentWeapon);
+                    playerWeapon.SetWeapon(currentWeapon);
                 }
             }
         }
@@ -171,6 +174,10 @@ namespace Player
                 //Fire death event.
             }
         }
+        public List<WeaponScriptableObject> GetWeaponInventory()
+        {
+            return weaponsInventory;
+        }
 
         public void GetWeapon(WeaponScriptableObject newWeapon)
             //Public method for adding weapons to the player's inventory. Will check if the weapon ID matches the ID of
@@ -209,6 +216,15 @@ namespace Player
         public Tuple <int, int> GetPlayerInfo()
         {
             return Tuple.Create(currentHealth, currentPlayer.maxHealth);
+        }
+        private void DebugStats()
+        {
+            if (Input.GetKeyDown(KeyCode.Y)) ;
+            {
+                Debug.Log(currentWeapon.weaponName);
+                Debug.Log("TOTAL: " + currentWeapon.currentAmmoInInventory + "/" + currentWeapon.maxAmmoInInventory);
+                Debug.Log("MAG: " + currentWeapon.currentMagazineAmmo + "/" + currentWeapon.maxMagazineAmmo);
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1c70aeee82f04e4e9fbc49a5d6314f9, type: 3}
-  m_Name: Default_Weapon
+  m_Name: 00_Default_Weapon
   m_EditorClassIdentifier: 
   iD: 0
   weaponName: Starter Pistol
