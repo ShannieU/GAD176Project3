@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     // when play pressed start game
     void StartGame()
     {
-        EventManager.current.GameBegin();
+        //EventManager.current.GameBegin();
     }
 
     // set initial stage

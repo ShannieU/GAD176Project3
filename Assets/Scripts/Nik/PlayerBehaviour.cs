@@ -18,6 +18,7 @@ namespace Player
         private position playerPosition = position.inCover;
         private bool shootDelay = false;
         private bool debug = false;
+        private bool inCover = false;
         private int weaponIndex = 0;
 
         public List<WeaponScriptableObject> weaponsInventory = new List<WeaponScriptableObject>();
@@ -30,29 +31,49 @@ namespace Player
         private void Start()
         {
             SetBeginStats(SanityChecks());
+            EventManager.current.onEnterCover += EnterCoverMethods;
+            EventManager.current.onExitCover += ExitCoverMethods;
         }
 
         private void Update()
+        {
+            CheckPosition();
+            CycleWeapon();
+            PlayerDeathCheck();
+            DebugStats();
+        }
+
+        void CheckPosition()
+        {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                PosSwitch();
+            }
+            else
+            {
+                EventManager.current.ExitCover();
+                playerPosition = position.outCover;
+                StartCoroutine(Shoot());
+            }
+        }
+        void PosSwitch()
         {
             switch (playerPosition)
             {
                 case position.inCover:
                     playerWeapon.ReloadWeapon();
-                    CycleWeapon();
+                    
                     //Behaviour to allow when in cover:
-                        //When moving into cover, reload currently equipped weapon.
-                        //When shoot button is pressed in cover, switch weapons.
-                            //On weapon switch, reload current weapon.
-                        //When in cover, player cannot take damage. Send event to enemies so they cannot damage player?
-                break;
+                    //When moving into cover, reload currently equipped weapon.
+                    //When shoot button is pressed in cover, switch weapons.
+                    //On weapon switch, reload current weapon.
+                    //When in cover, player cannot take damage. Send event to enemies so they cannot damage player?
+                    break;
 
                 case position.outCover:
-                    StartCoroutine(Shoot());
-                break;
+                    
+                    break;
             }
-            CoverInAndOut();
-            PlayerDeathCheck();
-            DebugStats();
         }
         #endregion
 
@@ -117,47 +138,37 @@ namespace Player
             //  an int, which acts as an index for picking to weapon from the inventory. Contains an out of range check to
             //  reset index to 0.
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (playerPosition == position.inCover)
             {
-                weaponIndex++;
-                if (weaponIndex > weaponsInventory.Count - 1)
+                if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    weaponIndex = 0;
-                    currentWeapon = weaponsInventory[weaponIndex];
-                    playerWeapon.SetWeapon(currentWeapon);
-                }
-                else
-                {
-                    currentWeapon = weaponsInventory[weaponIndex];
-                    playerWeapon.SetWeapon(currentWeapon);
+                    weaponIndex++;
+                    if (weaponIndex > weaponsInventory.Count - 1)
+                    {
+                        weaponIndex = 0;
+                        currentWeapon = weaponsInventory[weaponIndex];
+                        playerWeapon.SetWeapon(currentWeapon);
+                    }
+                    else
+                    {
+                        currentWeapon = weaponsInventory[weaponIndex];
+                        playerWeapon.SetWeapon(currentWeapon);
+                    }
                 }
             }
         }
 
-
-        private void CoverInAndOut()
-            //Temporary until we replace with an input handler. Hold space to not be in cover. Let go of space to be
-            //  in cover.
+        private void EnterCoverMethods()
         {
-            if (Input.GetKey(KeyCode.Space))
-            {
-                playerPosition = position.outCover;
+            playerWeapon.ReloadWeapon();
+            //Replace the Vector3.zeroes in here with the two transform positions from the movement script.
+            transform.position = Vector3.MoveTowards(Vector3.up, Vector3.zero, 1 * Time.deltaTime);
+        }
 
-                //Replace the Vector3.zeroes in here with the two transform positions from the movement script.
-                if (transform.position != Vector3.up)
-                {
-                    transform.position = Vector3.MoveTowards(Vector3.zero, Vector3.up, 1 * Time.deltaTime);
-                }
-            }
-            if (!Input.GetKey(KeyCode.Space))
-            {
-                //Replace the Vector3.zeroes in here with the two transform positions from the movement script.
-                playerPosition = position.inCover;
-                if (transform.position != Vector3.zero)
-                {
-                    transform.position = Vector3.MoveTowards(Vector3.up, Vector3.zero, 1 * Time.deltaTime);
-                }
-            }
+        private void ExitCoverMethods()
+        {
+            //Replace the Vector3.zeroes in here with the two transform positions from the movement script.
+            transform.position = Vector3.MoveTowards(Vector3.zero, Vector3.up, 1 * Time.deltaTime);
         }
 
         public void PlayerTakeDamage(int damage)
@@ -171,7 +182,7 @@ namespace Player
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
-                //Fire death event.
+                EventManager.current.Lose();
             }
         }
         public List<WeaponScriptableObject> GetWeaponInventory()
