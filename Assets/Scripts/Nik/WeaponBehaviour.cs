@@ -50,6 +50,7 @@ namespace Player {
         }
         public void ReloadWeapon()
         {
+            Debug.Log("Reload");
             foreach (WeaponScriptableObject weapon in currentPlayer.GetWeaponInventory())
             {
                 if (weapon.currentAmmoInInventory != 0)

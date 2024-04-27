@@ -17,8 +17,8 @@ namespace Player
         private enum position { inCover, outCover }
         private position playerPosition = position.inCover;
         private bool shootDelay = false;
-        private bool debug = false;
-        private bool inCover = false;
+        private bool noDamage = false;
+        private bool tick = false;
         private int weaponIndex = 0;
 
         public List<WeaponScriptableObject> weaponsInventory = new List<WeaponScriptableObject>();
@@ -33,45 +33,73 @@ namespace Player
             SetBeginStats(SanityChecks());
             EventManager.current.onEnterCover += EnterCoverMethods;
             EventManager.current.onExitCover += ExitCoverMethods;
+            BitWise();
         }
 
         private void Update()
         {
-            CheckPosition();
-            CycleWeapon();
-            PlayerDeathCheck();
-            DebugStats();
+            GetInput();
+            StateMachineUpdate();
+            StateMachineSingle();
         }
 
-        void CheckPosition()
+        void BitWise()
+        {
+            int x = 60;
+            int y = x >> 1;
+            Debug.Log(y);
+        }
+        void GetInput()
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                PosSwitch();
-            }
-            else
-            {
-                EventManager.current.ExitCover();
                 playerPosition = position.outCover;
-                StartCoroutine(Shoot());
+                EventManager.current.ExitCover();
+            }
+            else if (!Input.GetKey(KeyCode.Space))
+            {
+                playerPosition = position.inCover;
+                EventManager.current.EnterCover();
             }
         }
-        void PosSwitch()
+        void StateMachineUpdate()
+            //State machine which lives in update and fires events continuously when in a specific state.
         {
             switch (playerPosition)
             {
                 case position.inCover:
-                    playerWeapon.ReloadWeapon();
-                    
-                    //Behaviour to allow when in cover:
-                    //When moving into cover, reload currently equipped weapon.
-                    //When shoot button is pressed in cover, switch weapons.
-                    //On weapon switch, reload current weapon.
-                    //When in cover, player cannot take damage. Send event to enemies so they cannot damage player?
+                    Debug.Log("Update method in cover");
+                    CycleWeapon();
                     break;
 
                 case position.outCover:
-                    
+                    Debug.Log("Update method out cover");
+                    StartCoroutine(Shoot());
+                    break;
+            }
+        }
+
+        void StateMachineSingle()
+            //State machine that fire events and methods once when the state is changed.
+        {
+            switch (playerPosition)
+            {
+                case position.inCover:
+                    if (tick)
+                    {
+                        Debug.Log("Single method in cover");
+                        playerWeapon.ReloadWeapon();
+                        tick = false;
+                    }
+                    break;
+
+                case position.outCover:
+                    if (tick)
+                    {
+                        Debug.Log("Single method out cover");
+                        StartCoroutine(InvulTimer());
+                        tick = false;
+                    }
                     break;
             }
         }
@@ -110,7 +138,7 @@ namespace Player
             if (sane)
             {
                 currentHealth = currentPlayer.maxHealth;
-                weaponsInventory.Add(starterWeapon);
+                weaponsInventory[0] = starterWeapon;
                 currentWeapon = weaponsInventory[weaponIndex];
                 playerWeapon.SetWeapon(currentWeapon);
             }
@@ -119,16 +147,18 @@ namespace Player
         private IEnumerator Shoot()
         //Contains the shoot behaviour. Pulls all necessary stats from the currentWeapon scriptableObject.
         {
-            
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (playerPosition == position.outCover)
             {
-                if (shootDelay == false)
+                if (Input.GetKey(KeyCode.Mouse0))
                 {
-                    Debug.Log("Shoot");
-                    shootDelay = true;
-                    playerWeapon.ShootWeapon();
-                    yield return new WaitForSecondsRealtime(currentWeapon.weaponFireDelay);
-                    shootDelay = false;
+                    if (shootDelay == false)
+                    {
+                        Debug.Log("Shoot");
+                        shootDelay = true;
+                        playerWeapon.ShootWeapon();
+                        yield return new WaitForSecondsRealtime(currentWeapon.weaponFireDelay);
+                        shootDelay = false;
+                    }
                 }
             }
         }
@@ -171,10 +201,26 @@ namespace Player
             transform.position = Vector3.MoveTowards(Vector3.zero, Vector3.up, 1 * Time.deltaTime);
         }
 
-        public void PlayerTakeDamage(int damage)
-            //Public method for enemies to damage the player.
+        private IEnumerator InvulTimer()
+            //Provides the player with 1.5s of invincibility when the leave cover.
         {
-            currentHealth -= damage;
+            Debug.Log("Cannot take damage");
+            noDamage = true;
+            yield return new WaitForSeconds(1.5f);
+            noDamage = false;
+            Debug.Log("Can take damage");
+        }
+        public void PlayerTakeDamage(int damage)
+            //Public method for enemies to damage the player. Will not adjust player's health if they are invulnerable.
+        {
+            if (!noDamage)
+            {
+                currentHealth -= damage;
+            }
+            else if (noDamage)
+            {
+                currentHealth -= 0;
+            }
         }
 
         private void PlayerDeathCheck()
@@ -230,7 +276,7 @@ namespace Player
         }
         private void DebugStats()
         {
-            if (Input.GetKeyDown(KeyCode.Y)) ;
+            if (Input.GetKeyDown(KeyCode.Y));
             {
                 Debug.Log(currentWeapon.weaponName);
                 Debug.Log("TOTAL: " + currentWeapon.currentAmmoInInventory + "/" + currentWeapon.maxAmmoInInventory);

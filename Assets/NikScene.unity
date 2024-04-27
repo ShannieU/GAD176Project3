@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 65963561}
   - component: {fileID: 65963564}
   - component: {fileID: 65963565}
+  - component: {fileID: 65963566}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -231,7 +232,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentPlayer: {fileID: 11400000, guid: 5c706afc608c7ce458357b8b4024e865, type: 2}
   currentHealth: 0
-  weaponsInventory: []
+  weaponsInventory:
+  - {fileID: 0}
+  - {fileID: 11400000, guid: debf5b8c86e58844b8733190513864a4, type: 2}
+  - {fileID: 11400000, guid: 4851782ac5c3ed249880f894fc38fd68, type: 2}
   starterWeapon: {fileID: 11400000, guid: 02d0a4f97dbdc4043ab0baadbcccd8dc, type: 2}
   currentWeapon: {fileID: 0}
   playerWeapon: {fileID: 65963565}
@@ -245,6 +249,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d25e31cb1fe9b6c48ad52e43643ce85e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &65963566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65963558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 624cb46ea0c92334f8e647f14111bb30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1236753916
