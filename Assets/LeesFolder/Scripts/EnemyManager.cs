@@ -29,6 +29,10 @@ namespace LeesStuff
         private void Update()
         {
             //SpawnEnemies();
+            if(aliveEnemies.Count == 0)
+            {
+                //Call move to next location event. 
+            }
         }
 
         private void FindLocationToSpawn()
