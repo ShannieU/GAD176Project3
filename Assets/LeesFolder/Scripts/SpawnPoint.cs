@@ -2,14 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnPoint : MonoBehaviour
+namespace LeesStuff
 {
-    public int order, enemyCount;
-
-    public Transform mineLocation;
-
-    private void Start()
+    public class SpawnPoint : MonoBehaviour
     {
-        mineLocation = this.gameObject.transform;
+        public int order, enemyCount;
+
+        public Transform mineLocation;
+
+        public List<Cover> covers;
+
+        private void Start()
+        {
+            mineLocation = this.gameObject.transform;
+        }
     }
 }
