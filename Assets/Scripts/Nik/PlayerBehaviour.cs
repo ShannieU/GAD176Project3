@@ -33,7 +33,7 @@ namespace Player
             SetBeginStats(SanityChecks());
             EventManager.current.onEnterCover += EnterCoverMethods;
             EventManager.current.onExitCover += ExitCoverMethods;
-            BitWise();
+            
         }
 
         private void Update()
@@ -43,12 +43,6 @@ namespace Player
             StateMachineSingle();
         }
 
-        void BitWise()
-        {
-            int x = 60;
-            int y = x >> 1;
-            Debug.Log(y);
-        }
         void GetInput()
         {
             if (Input.GetKey(KeyCode.Space))
