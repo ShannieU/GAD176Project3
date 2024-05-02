@@ -101,4 +101,25 @@ public class EventManager : MonoBehaviour
             onResetGame();
         }
     }
+
+    // Player Enters Cover
+    public event Action onEnterCover;
+    public void EnterCover()
+    {
+        if (onEnterCover != null)
+        {
+            onEnterCover();
+        }
+    }
+
+    //Player Leaves Cover
+    public event Action onExitCover;
+    public void ExitCover()
+    {
+        if (onExitCover != null)
+        {
+            onExitCover();
+
+        }
+    }
 }
