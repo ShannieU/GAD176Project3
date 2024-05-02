@@ -475,7 +475,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &667869389
 AudioListener:
   m_ObjectHideFlags: 0
@@ -577,7 +577,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &990156062
 Light:
   m_ObjectHideFlags: 0
@@ -801,6 +801,10 @@ PrefabInstance:
     - target: {fileID: 439931324291276273, guid: 4a359cb7ad90c874d84c37cf9a16842b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1385245516648017201, guid: 4a359cb7ad90c874d84c37cf9a16842b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5986609055929681732, guid: 4a359cb7ad90c874d84c37cf9a16842b, type: 3}
       propertyPath: m_Name

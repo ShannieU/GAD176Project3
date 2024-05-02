@@ -62,12 +62,12 @@ namespace Player
             switch (playerPosition)
             {
                 case position.inCover:
-                    Debug.Log("Update method in cover");
+                    //Debug.Log("Update method in cover");
                     CycleWeapon();
                     break;
 
                 case position.outCover:
-                    Debug.Log("Update method out cover");
+                    //Debug.Log("Update method out cover");
                     StartCoroutine(Shoot());
                     break;
             }
